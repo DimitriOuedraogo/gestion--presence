@@ -11,7 +11,6 @@ class SessionPresence extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'date_presence',
         'heure_debut',
         'heure_fin',

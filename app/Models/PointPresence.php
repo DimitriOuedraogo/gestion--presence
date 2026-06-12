@@ -10,7 +10,6 @@ class PointPresence extends Model
     /** @use HasFactory<\Database\Factories\PointPresenceFactory> */
     use HasFactory;
     protected $fillable = [
-        'id',
         'date_presence',
         'nom',
         'latitude',
