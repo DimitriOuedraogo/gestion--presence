@@ -19,6 +19,10 @@ class PointPresence extends Model
     ];
     
 
+    protected $casts = [
+        'date_presence' => 'date',
+    ];
+
     public function sessions(): HasMany
     {
         return $this->hasMany(SessionPresence::class, 'point_presence_id');

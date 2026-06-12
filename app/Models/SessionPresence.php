@@ -19,6 +19,12 @@ class SessionPresence extends Model
     ];
 
 
+    protected $casts = [
+        'date_presence' => 'date',
+        'heure_debut' => 'datetime:H:i:s',
+        'heure_fin' => 'datetime:H:i:s',
+    ];
+
     public function pointPresence(): BelongsTo
     {
         return $this->belongsTo(PointPresence::class);
