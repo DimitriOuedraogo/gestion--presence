@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PointPresence extends Model
 {
@@ -18,9 +19,9 @@ class PointPresence extends Model
     ];
     
 
-    public function sessions()
+    public function sessions(): HasMany
     {
-        return $this->hasMany(SessionPresence::class);
+        return $this->hasMany(SessionPresence::class, 'point_presence_id');
     }
 
 }
