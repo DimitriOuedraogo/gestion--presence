@@ -29,9 +29,14 @@
                     🏠 Tableau de bord
                 </a>
 
+                <a href="{{ route('admin.session-presences.index') }}"
+                    class="block px-4 py-3 rounded-lg hover:bg-slate-800 transition">
+                    sessions
+                </a>
+
                 <a href="{{ route('admin.point-presences.index') }}"
                     class="block px-4 py-3 rounded-lg hover:bg-slate-800 transition">
-                    📍 Points de présence
+                    Points de présence
                 </a>
 
                 <a href="#"
