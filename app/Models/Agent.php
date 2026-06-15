@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+
 
 class Agent extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use Notifiable;
 
     protected $fillable = [
         'nom',
@@ -16,6 +16,7 @@ class Agent extends Authenticatable
         'email',
         'password',
         'structure',
+        'telephone',
         'qr_code_uuid',
         'actif',
     ];
