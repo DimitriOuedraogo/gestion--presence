@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Agent;
 use App\Models\Presence;
 use App\Models\SessionPresence;
 use App\Services\DistanceCalcul;
@@ -16,16 +17,22 @@ class PointageController extends Controller
 
     public function store(Request $request)
     {
+        // 1. Validation
         $validated = $request->validate([
-            'agent_id'             => 'required|exists:agents,id', // TODO: remplacer par auth()->id() une fois Sanctum en place
-            'session_presence_id'  => 'required|exists:session_presences,id',
-            'latitude'             => 'required|numeric|between:-90,90',
-            'longitude'            => 'required|numeric|between:-180,180',
-            'appareil'             => 'nullable|string|max:45',
+            'email'               => 'required|email|exists:agents,email',
+            'session_presence_id' => 'required|exists:session_presences,id',
+            'latitude'            => 'required|numeric|between:-90,90',
+            'longitude'           => 'required|numeric|between:-180,180',
+            'appareil'            => 'nullable|string|max:45',
         ]);
 
-        // Anti-fraude : un seul pointage par agent, par session, par jour
-        $dejaPointe = Presence::where('agent_id', $validated['agent_id'])
+        // 2. Récupérer l'agent via son email
+        $agent = Agent::where('email', $validated['email'])
+                      ->where('actif', true)
+                      ->firstOrFail();
+
+        // 3. Anti-fraude : un seul pointage par agent par session par jour
+        $dejaPointe = Presence::where('agent_id', $agent->id)
             ->where('session_presence_id', $validated['session_presence_id'])
             ->whereDate('date_heure', today())
             ->exists();
@@ -36,11 +43,12 @@ class PointageController extends Controller
             ], 409);
         }
 
-        // Récupérer la session et son point de présence associé
-        $session = SessionPresence::with('pointPresence')->findOrFail($validated['session_presence_id']);
+        // 4. Récupérer la session et son point de présence
+        $session = SessionPresence::with('pointPresence')
+                                  ->findOrFail($validated['session_presence_id']);
         $point   = $session->pointPresence;
 
-        // Calculer la distance entre la position de l'agent et le point autorisé
+        // 5. Calculer la distance GPS
         $distance = $this->distanceCalcul->calculer(
             $validated['latitude'],
             $validated['longitude'],
@@ -50,25 +58,31 @@ class PointageController extends Controller
 
         $valide = $this->distanceCalcul->estDansLeRayon($distance, (float) $point->rayon_autorise);
 
+        // 6. Enregistrer la présence
         $presence = Presence::create([
-            'date_heure'           => now(),
-            'latitude'             => $validated['latitude'],
-            'longitude'            => $validated['longitude'],
-            'distance_metre'       => $distance,
-            'appareil'             => $validated['appareil'] ?? $request->userAgent(),
-            'valide'               => $valide,
+            'date_heure'          => now(),
+            'latitude'            => $validated['latitude'],
+            'longitude'           => $validated['longitude'],
+            'distance_metre'      => $distance,
+            'appareil'            => $validated['appareil'] ?? $request->userAgent(),
+            'valide'              => $valide,
             'session_presence_id' => $session->id,
-            'agent_id'             => $validated['agent_id'],
+            'agent_id'            => $agent->id,
         ]);
 
         return response()->json([
-            'message'         => $valide
+            'message'        => $valide
                 ? 'Présence enregistrée avec succès.'
-                : 'Présence enregistrée, mais hors de la zone autorisée.',
-            'distance_metre'  => round($distance, 2),
-            'rayon_autorise'  => (float) $point->rayon_autorise,
-            'valide'          => $valide,
-            'presence'        => $presence,
+                : 'Présence enregistrée, mais vous êtes hors de la zone autorisée.',
+            'agent'          => [
+                'id'     => $agent->id,
+                'nom'    => $agent->nom,
+                'prenom' => $agent->prenom,
+            ],
+            'distance_metre' => round($distance, 2),
+            'rayon_autorise' => (float) $point->rayon_autorise,
+            'valide'         => $valide,
+            'presence_id'    => $presence->id,
         ], 201);
     }
 }
