@@ -112,6 +112,16 @@
             </div>
 
         </div>
+        <div class="md:col-span-2">
+            <button
+                type="button"
+                id="btn-geoloc"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                Obtenir ma position GPS
+            </button>
+
+            <p id="gps-status" class="mt-2 text-sm text-slate-500"></p>
+        </div>
 
     </div>
 

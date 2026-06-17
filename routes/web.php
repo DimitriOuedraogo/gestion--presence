@@ -1,14 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PresenceController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/admin', function () {
-    return view('admin.index');
+
+Route::get('/home', function () {
+    return view('index');
+})->name('home');
+
+Route::prefix('presences')->controller(PresenceController::class)->name('presences.')->group(function () {
+    Route::get('/', 'index')->name('index');
+
+    Route::get('/create', 'create')->name('create');
+
+    Route::get('/{id}/edit', 'edit')->name('edit');
+
+    Route::post('/', 'store')->name('store');
 });
+
+
 
 Route::prefix('admin')->name('admin.')->group(function () {
     // Route::resource('point-presences', \App\Http\Controllers\PointPresenceController::class);

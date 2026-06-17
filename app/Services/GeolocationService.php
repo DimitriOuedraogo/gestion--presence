@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
+
 class GeolocationService
 {
     /**
@@ -19,7 +21,7 @@ class GeolocationService
         float $longitude2
     ): float {
         $earthRadius = 6371000;
-
+        Log::info('Calculating distance between: (' . $latitude1 . ', ' . $longitude1 . ') and (' . $latitude2 . ', ' . $longitude2 . ')');
         $dLat = deg2rad($latitude2 - $latitude1);
         $dLon = deg2rad($longitude2 - $longitude1);
 
