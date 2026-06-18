@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation — Gestion Présence</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 13px;
+    color: #1e293b;
+    line-height: 1.7;
+    background: #f8fafc;
+  }
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 60px 70px;
+  }
+
+  /* Cover */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+    color: white;
+    padding: 60px;
+    page-break-after: always;
+  }
+  .cover-icon {
+    width: 80px; height: 80px;
+    background: #2563eb;
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 30px;
+    font-size: 36px;
+  }
+  .cover h1 { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
+  .cover .subtitle { font-size: 16px; color: #93c5fd; margin-bottom: 40px; }
+  .cover-meta { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; margin-top: 50px; }
+  .cover-meta-item { text-align: center; }
+  .cover-meta-item .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; }
+  .cover-meta-item .value { font-size: 14px; font-weight: 600; color: #e2e8f0; margin-top: 4px; }
+  .cover-badge {
+    display: inline-block;
+    background: #2563eb;
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* TOC */
+  .toc { page-break-after: always; padding-top: 40px; }
+  .toc h2 { font-size: 22px; font-weight: 700; color: #1e293b; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; }
+  .toc-item { display: flex; align-items: baseline; gap: 8px; padding: 6px 0; border-bottom: 1px dotted #e2e8f0; }
+  .toc-item .num { font-weight: 700; color: #2563eb; min-width: 30px; }
+  .toc-item .title { flex: 1; font-size: 13px; }
+  .toc-item .page-num { color: #94a3b8; font-size: 12px; }
+  .toc-section { margin-top: 16px; }
+  .toc-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 600; margin-bottom: 8px; margin-top: 16px; }
+
+  /* Content */
+  h2.section-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 6px;
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2.section-title .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    background: #2563eb;
+    color: white;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-divider { height: 2px; background: linear-gradient(to right, #2563eb, transparent); margin-bottom: 24px; }
+
+  h3 { font-size: 15px; font-weight: 700; color: #1e293b; margin: 24px 0 10px; }
+  h4 { font-size: 13px; font-weight: 600; color: #334155; margin: 16px 0 8px; }
+
+  p { margin-bottom: 12px; color: #334155; }
+
+  /* Cards */
+  .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 12px 0;
+  }
+  .card-blue { background: #eff6ff; border-color: #bfdbfe; }
+  .card-green { background: #f0fdf4; border-color: #bbf7d0; }
+  .card-amber { background: #fffbeb; border-color: #fde68a; }
+  .card-red { background: #fef2f2; border-color: #fecaca; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+  th { background: #1e293b; color: white; padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  th:first-child { border-radius: 8px 0 0 0; }
+  th:last-child { border-radius: 0 8px 0 0; }
+  td { padding: 9px 14px; border-bottom: 1px solid #f1f5f9; }
+  tr:hover td { background: #f8fafc; }
+  tr:last-child td { border-bottom: none; }
+
+  /* Code */
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #0f172a;
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 18px 20px;
+    border-radius: 10px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+  pre .comment { color: #64748b; }
+  pre .keyword { color: #93c5fd; }
+  pre .string { color: #86efac; }
+  pre .var { color: #fca5a5; }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-red { background: #fee2e2; color: #dc2626; }
+  .badge-amber { background: #fef3c7; color: #d97706; }
+  .badge-slate { background: #f1f5f9; color: #475569; }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+
+  /* Feature item */
+  .feature { display: flex; gap: 12px; margin: 10px 0; }
+  .feature-icon { width: 32px; height: 32px; background: #dbeafe; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .feature-text .title { font-weight: 600; font-size: 13px; color: #1e293b; }
+  .feature-text .desc { font-size: 12px; color: #64748b; }
+
+  /* List */
+  ul.styled { list-style: none; padding: 0; }
+  ul.styled li { padding: 4px 0 4px 20px; position: relative; color: #334155; }
+  ul.styled li::before { content: '→'; position: absolute; left: 0; color: #2563eb; font-weight: 700; }
+
+  /* Route row */
+  .route { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin: 6px 0; font-size: 12px; }
+  .method { font-weight: 700; font-size: 10px; padding: 2px 8px; border-radius: 4px; min-width: 42px; text-align: center; }
+  .method-get { background: #dcfce7; color: #15803d; }
+  .method-post { background: #fef3c7; color: #d97706; }
+  .method-put { background: #dbeafe; color: #1d4ed8; }
+  .method-del { background: #fee2e2; color: #dc2626; }
+  .route-path { font-family: monospace; color: #0f172a; flex: 1; }
+  .route-desc { color: #64748b; font-size: 11px; }
+
+  /* Page break */
+  .page-break { page-break-before: always; }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  @media print {
+    body { background: white; }
+    .page { padding: 40px 50px; max-width: 100%; }
+    .cover { min-height: 100vh; }
+    h2.section-title { page-break-before: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ COVER -->
+<div class="cover">
+  <div class="cover-icon">📋</div>
+  <div class="cover-badge">Documentation Technique</div>
+  <h1>Gestion Présence</h1>
+  <p class="subtitle">Système de gestion des présences par QR Code</p>
+  <div style="width:60px;height:3px;background:#2563eb;margin:0 auto 30px;border-radius:2px;"></div>
+  <p style="color:#94a3b8;max-width:500px;font-size:14px;">Application web Laravel 12 permettant la gestion des sessions de présence, la génération de QR codes et le suivi des agents.</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="label">Framework</div>
+      <div class="value">Laravel 12</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Language</div>
+      <div class="value">PHP 8.2</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Base de données</div>
+      <div class="value">MySQL / MariaDB</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">CSS</div>
+      <div class="value">Tailwind CSS v4</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Date</div>
+      <div class="value">Juin 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Version</div>
+      <div class="value">1.0.0</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ============================================================ TOC -->
+<div class="toc">
+  <h2>Table des matières</h2>
+
+  <div class="toc-section-title">Présentation</div>
+  <div class="toc-item"><span class="num">1</span><span class="title">Vue d'ensemble du projet</span></div>
+  <div class="toc-item"><span class="num">2</span><span class="title">Technologies utilisées</span></div>
+  <div class="toc-item"><span class="num">3</span><span class="title">Architecture du projet</span></div>
+
+  <div class="toc-section-title">Base de données</div>
+  <div class="toc-item"><span class="num">4</span><span class="title">Schéma de la base de données</span></div>
+  <div class="toc-item"><span class="num">5</span><span class="title">Modèles Eloquent</span></div>
+
+  <div class="toc-section-title">Fonctionnalités</div>
+  <div class="toc-item"><span class="num">6</span><span class="title">Authentification administrateur</span></div>
+  <div class="toc-item"><span class="num">7</span><span class="title">Gestion des sessions de présence</span></div>
+  <div class="toc-item"><span class="num">8</span><span class="title">Système QR Code</span></div>
+  <div class="toc-item"><span class="num">9</span><span class="title">Marquage de présence public</span></div>
+  <div class="toc-item"><span class="num">10</span><span class="title">Anti-fraude</span></div>
+  <div class="toc-item"><span class="num">11</span><span class="title">Export Excel</span></div>
+
+  <div class="toc-section-title">Technique</div>
+  <div class="toc-item"><span class="num">12</span><span class="title">Routes de l'application</span></div>
+  <div class="toc-item"><span class="num">13</span><span class="title">Configuration et déploiement</span></div>
+  <div class="toc-item"><span class="num">14</span><span class="title">Packages installés</span></div>
+</div>
+
+<!-- ============================================================ 1. VUE D'ENSEMBLE -->
+<h2 class="section-title"><span class="num">1</span> Vue d'ensemble du projet</h2>
+<div class="section-divider"></div>
+
+<p><strong>Gestion Présence</strong> est une application web développée avec Laravel 12 permettant à une organisation de gérer les présences de ses agents lors de sessions de formation ou de réunions. Le système repose sur la génération de QR codes uniques par session : les agents scannent le QR code avec leur smartphone et renseignent leur email pour marquer leur présence.</p>
+
+<div class="grid-2" style="margin-top:20px;">
+  <div class="card card-blue">
+    <h4 style="color:#1d4ed8;">👤 Côté Administrateur</h4>
+    <ul class="styled">
+      <li>Connexion sécurisée par mot de passe</li>
+      <li>Gestion des sessions de présence</li>
+      <li>Gestion des points de présence (lieux)</li>
+      <li>Génération et affichage des QR codes</li>
+      <li>Consultation des présences par session</li>
+      <li>Export Excel des listes de présence</li>
+      <li>Consultation de la liste des agents</li>
+    </ul>
+  </div>
+  <div class="card card-green">
+    <h4 style="color:#15803d;">📱 Côté Agent (Public)</h4>
+    <ul class="styled">
+      <li>Scan du QR code de la session</li>
+      <li>Saisie de l'email professionnel</li>
+      <li>Vérification automatique de l'identité</li>
+      <li>Confirmation de présence instantanée</li>
+      <li>Accès uniquement pendant la plage horaire</li>
+      <li>Pas de compte requis</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================ 2. TECHNOLOGIES -->
+<h2 class="section-title page-break"><span class="num">2</span> Technologies utilisées</h2>
+<div class="section-divider"></div>
+
+<table>
+  <tr><th>Catégorie</th><th>Technologie</th><th>Version</th><th>Rôle</th></tr>
+  <tr><td>Framework Backend</td><td>Laravel</td><td>12.x</td><td>Framework PHP principal</td></tr>
+  <tr><td>Language</td><td>PHP</td><td>8.2+</td><td>Langage serveur</td></tr>
+  <tr><td>Base de données</td><td>MariaDB / MySQL</td><td>10.4 / 8.0</td><td>Stockage des données</td></tr>
+  <tr><td>ORM</td><td>Eloquent</td><td>—</td><td>Interactions base de données</td></tr>
+  <tr><td>CSS Framework</td><td>Tailwind CSS</td><td>4.x</td><td>Styles et composants UI</td></tr>
+  <tr><td>Build Tool</td><td>Vite</td><td>7.x</td><td>Compilation assets CSS/JS</td></tr>
+  <tr><td>QR Code</td><td>simplesoftwareio/simple-qrcode</td><td>4.x</td><td>Génération QR codes SVG</td></tr>
+  <tr><td>Export Excel</td><td>maatwebsite/excel</td><td>3.x</td><td>Export fichiers .xlsx</td></tr>
+  <tr><td>Template Engine</td><td>Blade</td><td>—</td><td>Vues HTML</td></tr>
+  <tr><td>Sessions</td><td>Database Driver</td><td>—</td><td>Persistance des sessions</td></tr>
+</table>
+
+<!-- ============================================================ 3. ARCHITECTURE -->
+<h2 class="section-title"><span class="num">3</span> Architecture du projet</h2>
+<div class="section-divider"></div>
+
+<h3>Structure des dossiers principaux</h3>
+<pre>
+gestion-presence/
+├── app/
+│   ├── <span class="keyword">Http/</span>
+│   │   ├── Controllers/
+│   │   │   ├── AdminAuthController.php       <span class="comment"># Authentification admin</span>
+│   │   │   ├── AgentController.php           <span class="comment"># Liste des agents</span>
+│   │   │   ├── PointPresenceController.php   <span class="comment"># CRUD points de présence</span>
+│   │   │   ├── PresencePubliqueController.php <span class="comment"># Marquage public</span>
+│   │   │   └── SessionPresenceController.php  <span class="comment"># CRUD sessions + QR</span>
+│   │   └── Middleware/
+│   │       └── AdminAuthenticated.php         <span class="comment"># Protection routes admin</span>
+│   ├── <span class="keyword">Exports/</span>
+│   │   └── PresencesExport.php               <span class="comment"># Export Excel</span>
+│   └── <span class="keyword">Models/</span>
+│       ├── Agent.php
+│       ├── Presence.php
+│       ├── PointPresence.php
+│       └── SessionPresence.php
+├── database/migrations/                      <span class="comment"># Migrations SQL</span>
+├── resources/views/
+│   ├── admin/                                <span class="comment"># Vues administration</span>
+│   │   ├── auth/login.blade.php
+│   │   ├── agents/index.blade.php
+│   │   ├── dashboard.blade.php
+│   │   ├── point-presences/
+│   │   └── session-presences/
+│   ├── layouts/
+│   │   ├── admin.blade.php                   <span class="comment"># Layout admin (sidebar)</span>
+│   │   └── public.blade.php                  <span class="comment"># Layout public</span>
+│   └── public/presence/                      <span class="comment"># Vues marquage public</span>
+├── routes/web.php                            <span class="comment"># Définition des routes</span>
+├── storage/app/public/qrcodes/               <span class="comment"># QR codes générés</span>
+└── .env                                      <span class="comment"># Configuration</span>
+</pre>
+
+<!-- ============================================================ 4. BASE DE DONNÉES -->
+<h2 class="section-title page-break"><span class="num">4</span> Schéma de la base de données</h2>
+<div class="section-divider"></div>
+
+<h3>Table : <code>agents</code></h3>
+<table>
+  <tr><th>Colonne</th><th>Type</th><th>Contrainte</th><th>Description</th></tr>
+  <tr><td>id</td><td>bigint</td><td>PK, auto-increment</td><td>Identifiant unique</td></tr>
+  <tr><td>nom</td><td>varchar(255)</td><td>NOT NULL</td><td>Nom de famille</td></tr>
+  <tr><td>prenom</td><td>varchar(255)</td><td>NOT NULL</td><td>Prénom</td></tr>
+  <tr><td>email</td><td>varchar(255)</td><td>UNIQUE, NOT NULL</td><td>Email professionnel (clé d'identification)</td></tr>
+  <tr><td>telephone</td><td>varchar(255)</td><td>NULL</td><td>Numéro de téléphone</td></tr>
+  <tr><td>structure</td><td>varchar(255)</td><td>NULL</td><td>Service / département</td></tr>
+  <tr><td>password</td><td>varchar(255)</td><td>NOT NULL</td><td>Mot de passe hashé</td></tr>
+  <tr><td>actif</td><td>boolean</td><td>DEFAULT true</td><td>Statut actif/inactif</td></tr>
+  <tr><td>qr_code_uuid</td><td>varchar(255)</td><td>NULL</td><td>UUID personnel de l'agent</td></tr>
+  <tr><td>created_at / updated_at</td><td>timestamp</td><td>—</td><td>Horodatage Laravel</td></tr>
+</table>
+
+<h3>Table : <code>point_presences</code></h3>
+<table>
+  <tr><th>Colonne</th><th>Type</th><th>Contrainte</th><th>Description</th></tr>
+  <tr><td>id</td><td>bigint</td><td>PK</td><td>Identifiant</td></tr>
+  <tr><td>nom</td><td>varchar(255)</td><td>NOT NULL</td><td>Nom du lieu</td></tr>
+  <tr><td>adresse</td><td>varchar(255)</td><td>NULL</td><td>Adresse du lieu</td></tr>
+  <tr><td>latitude</td><td>decimal(10,8)</td><td>NULL</td><td>Coordonnée GPS latitude</td></tr>
+  <tr><td>longitude</td><td>decimal(11,8)</td><td>NULL</td><td>Coordonnée GPS longitude</td></tr>
+  <tr><td>created_at / updated_at</td><td>timestamp</td><td>—</td><td>Horodatage</td></tr>
+</table>
+
+<h3>Table : <code>session_presences</code></h3>
+<table>
+  <tr><th>Colonne</th><th>Type</th><th>Contrainte</th><th>Description</th></tr>
+  <tr><td>id</td><td>bigint</td><td>PK</td><td>Identifiant</td></tr>
+  <tr><td>nom</td><td>varchar(255)</td><td>NOT NULL</td><td>Intitulé de la session</td></tr>
+  <tr><td>date_presence</td><td>date</td><td>NOT NULL</td><td>Date de la session</td></tr>
+  <tr><td>heure_debut</td><td>time</td><td>NOT NULL</td><td>Heure de début</td></tr>
+  <tr><td>heure_fin</td><td>time</td><td>NOT NULL</td><td>Heure de fin</td></tr>
+  <tr><td>point_presence_id</td><td>bigint</td><td>FK → point_presences</td><td>Lieu de la session</td></tr>
+  <tr><td>token</td><td>varchar(255)</td><td>UNIQUE, NULL</td><td>UUID du lien QR code</td></tr>
+  <tr><td>qr_code_chemin</td><td>varchar(255)</td><td>NULL</td><td>Chemin du fichier SVG</td></tr>
+  <tr><td>created_at / updated_at</td><td>timestamp</td><td>—</td><td>Horodatage</td></tr>
+</table>
+
+<h3>Table : <code>presences</code></h3>
+<table>
+  <tr><th>Colonne</th><th>Type</th><th>Contrainte</th><th>Description</th></tr>
+  <tr><td>id</td><td>bigint</td><td>PK</td><td>Identifiant</td></tr>
+  <tr><td>session_presence_id</td><td>bigint</td><td>FK → session_presences</td><td>Session concernée</td></tr>
+  <tr><td>agent_id</td><td>bigint</td><td>FK → agents</td><td>Agent concerné</td></tr>
+  <tr><td>date_heure</td><td>datetime</td><td>NOT NULL</td><td>Horodatage du marquage</td></tr>
+  <tr><td>adresse_ip</td><td>varchar(45)</td><td>NULL</td><td>IP du dispositif (anti-fraude)</td></tr>
+  <tr><td>latitude / longitude</td><td>decimal</td><td>NULL</td><td>Position GPS (optionnel)</td></tr>
+  <tr><td>appareil</td><td>varchar(255)</td><td>NULL</td><td>User-agent du navigateur</td></tr>
+  <tr><td>valide</td><td>boolean</td><td>DEFAULT true</td><td>Présence validée</td></tr>
+  <tr><td>created_at / updated_at</td><td>timestamp</td><td>—</td><td>Horodatage</td></tr>
+</table>
+
+<!-- ============================================================ 5. MODÈLES -->
+<h2 class="section-title page-break"><span class="num">5</span> Modèles Eloquent</h2>
+<div class="section-divider"></div>
+
+<h3>Relations entre modèles</h3>
+
+<div class="card">
+  <p style="font-family:monospace;font-size:12px;line-height:2;">
+    <strong>Agent</strong> ──────── hasMany ──────→ <strong>Presence</strong><br>
+    <strong>PointPresence</strong> ─ hasMany ──────→ <strong>SessionPresence</strong><br>
+    <strong>SessionPresence</strong> hasMany ──────→ <strong>Presence</strong><br>
+    <strong>Presence</strong> ──────── belongsTo ──→ <strong>Agent</strong><br>
+    <strong>Presence</strong> ──────── belongsTo ──→ <strong>SessionPresence</strong><br>
+    <strong>SessionPresence</strong> belongsTo ───→ <strong>PointPresence</strong>
+  </p>
+</div>
+
+<h3>Méthode clé : <code>SessionPresence::estActive()</code></h3>
+<p>Cette méthode détermine si une session est actuellement en cours en comparant l'heure actuelle avec la plage horaire définie :</p>
+<pre>
+<span class="keyword">public function</span> estActive(): <span class="keyword">bool</span>
+{
+    $now   = Carbon::now();
+    $debut = Carbon::parse($this->date_presence . <span class="string">' '</span> . $this->heure_debut);
+    $fin   = Carbon::parse($this->date_presence . <span class="string">' '</span> . $this->heure_fin);
+    <span class="keyword">return</span> $now->between($debut, $fin);
+}
+</pre>
+
+<!-- ============================================================ 6. AUTH -->
+<h2 class="section-title"><span class="num">6</span> Authentification administrateur</h2>
+<div class="section-divider"></div>
+
+<p>L'accès à l'interface d'administration est protégé par un système d'authentification par mot de passe simple, basé sur les sessions Laravel.</p>
+
+<div class="grid-2">
+  <div class="card card-blue">
+    <h4 style="color:#1d4ed8;">Fonctionnement</h4>
+    <ul class="styled">
+      <li>Page de login : <code>/admin/login</code></li>
+      <li>Mot de passe vérifié contre <code>ADMIN_PASSWORD</code> dans le <code>.env</code></li>
+      <li>Session créée : <code>admin_logged_in = true</code></li>
+      <li>Middleware <code>AdminAuthenticated</code> sur toutes les routes <code>/admin/*</code></li>
+      <li>Déconnexion via bouton dans la sidebar</li>
+    </ul>
+  </div>
+  <div class="card card-amber">
+    <h4 style="color:#d97706;">Configuration</h4>
+    <p>Le mot de passe est défini dans le fichier <code>.env</code> :</p>
+    <pre style="margin-top:8px;">ADMIN_PASSWORD=1234567890</pre>
+    <p style="margin-top:8px;font-size:12px;color:#92400e;">⚠️ Changer ce mot de passe en production.</p>
+  </div>
+</div>
+
+<!-- ============================================================ 7. SESSIONS -->
+<h2 class="section-title page-break"><span class="num">7</span> Gestion des sessions de présence</h2>
+<div class="section-divider"></div>
+
+<p>Une <strong>session de présence</strong> représente un événement (réunion, formation, etc.) pour lequel on souhaite enregistrer les participants. Elle est associée à un point de présence (lieu) et définie par une plage horaire.</p>
+
+<h3>Cycle de vie d'une session</h3>
+<div class="card">
+  <p style="font-family:monospace;font-size:12px;text-align:center;line-height:2.5;">
+    Création → Génération Token UUID + QR Code SVG → Session active (pendant la plage horaire) → Agents marquent leur présence → Session expirée → Consultation / Export
+  </p>
+</div>
+
+<h3>Attributs formatés (Accessors)</h3>
+<table>
+  <tr><th>Attribut</th><th>Retour</th><th>Exemple</th></tr>
+  <tr><td><code>datePresenceFormatee</code></td><td>Date en format français</td><td>18/06/2026</td></tr>
+  <tr><td><code>heureDebutFormatee</code></td><td>Heure début HH:MM</td><td>08:30</td></tr>
+  <tr><td><code>heureFinFormatee</code></td><td>Heure fin HH:MM</td><td>17:00</td></tr>
+</table>
+
+<h3>Points de présence (lieux)</h3>
+<p>Chaque session est liée à un <strong>point de présence</strong> qui représente le lieu physique. Les coordonnées GPS (latitude/longitude) sont détectées automatiquement via l'API <code>navigator.geolocation</code> lors de la création dans le formulaire admin.</p>
+
+<!-- ============================================================ 8. QR CODE -->
+<h2 class="section-title"><span class="num">8</span> Système QR Code</h2>
+<div class="section-divider"></div>
+
+<p>À la création de chaque session, un QR code unique est automatiquement généré au format SVG et stocké dans <code>storage/app/public/qrcodes/</code>.</p>
+
+<h3>Génération</h3>
+<pre>
+<span class="comment">// URL construite depuis APP_URL (indépendant de l'IP de connexion admin)</span>
+$url = rtrim(config(<span class="string">'app.url'</span>), <span class="string">'/'</span>) . <span class="string">'/presence/'</span> . $session->token;
+
+<span class="comment">// Génération SVG 300x300px</span>
+$svg = QrCode::format(<span class="string">'svg'</span>)->size(300)->margin(1)->generate($url);
+Storage::disk(<span class="string">'public'</span>)->put(<span class="string">'qrcodes/session_'</span> . $session->id . <span class="string">'.svg'</span>, $svg);
+</pre>
+
+<div class="card card-blue">
+  <h4 style="color:#1d4ed8;">Points importants</h4>
+  <ul class="styled">
+    <li>Le token est un <strong>UUID v4</strong> unique et non devinable</li>
+    <li>L'URL dans le QR code utilise <code>APP_URL</code> du <code>.env</code> (pas l'IP de connexion admin)</li>
+    <li>Le bouton <strong>"Régénérer QR"</strong> permet de mettre à jour tous les QR codes si l'URL change (changement d'IP réseau)</li>
+    <li>Les QR codes sont servis publiquement via <code>storage/qrcodes/session_X.svg</code></li>
+  </ul>
+</div>
+
+<h3>Configuration APP_URL selon le réseau</h3>
+<table>
+  <tr><th>Contexte</th><th>APP_URL à utiliser</th></tr>
+  <tr><td>Test local (PC uniquement)</td><td><code>http://127.0.0.1:8000</code></td></tr>
+  <tr><td>Réseau WiFi local (téléphone sur même réseau)</td><td><code>http://&lt;IP_WIFI_PC&gt;:8000</code> (ex: 172.16.0.96)</td></tr>
+  <tr><td>Tunnel public (ngrok, etc.)</td><td><code>https://xxxx.ngrok-free.app</code></td></tr>
+</table>
+
+<!-- ============================================================ 9. MARQUAGE PUBLIC -->
+<h2 class="section-title page-break"><span class="num">9</span> Marquage de présence public</h2>
+<div class="section-divider"></div>
+
+<p>Le flux de marquage de présence est entièrement public (sans authentification). L'agent accède à la page via le QR code ou un lien partagé.</p>
+
+<h3>Flux complet</h3>
+
+<div class="card">
+  <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:180px;text-align:center;">
+      <div style="background:#dbeafe;border-radius:10px;padding:12px;margin-bottom:8px;">
+        <div style="font-size:20px;margin-bottom:4px;">📱</div>
+        <strong style="font-size:12px;color:#1d4ed8;">1. Scan QR Code</strong>
+        <p style="font-size:11px;color:#64748b;margin-top:4px;">L'agent scanne le QR code avec son téléphone</p>
+      </div>
+    </div>
+    <div style="padding-top:40px;color:#94a3b8;font-size:18px;">→</div>
+    <div style="flex:1;min-width:180px;text-align:center;">
+      <div style="background:#dcfce7;border-radius:10px;padding:12px;margin-bottom:8px;">
+        <div style="font-size:20px;margin-bottom:4px;">✉️</div>
+        <strong style="font-size:12px;color:#15803d;">2. Saisie Email</strong>
+        <p style="font-size:11px;color:#64748b;margin-top:4px;">Formulaire avec champ email professionnel</p>
+      </div>
+    </div>
+    <div style="padding-top:40px;color:#94a3b8;font-size:18px;">→</div>
+    <div style="flex:1;min-width:180px;text-align:center;">
+      <div style="background:#fef3c7;border-radius:10px;padding:12px;margin-bottom:8px;">
+        <div style="font-size:20px;margin-bottom:4px;">🔍</div>
+        <strong style="font-size:12px;color:#d97706;">3. Vérification</strong>
+        <p style="font-size:11px;color:#64748b;margin-top:4px;">Email recherché dans la table agents</p>
+      </div>
+    </div>
+    <div style="padding-top:40px;color:#94a3b8;font-size:18px;">→</div>
+    <div style="flex:1;min-width:180px;text-align:center;">
+      <div style="background:#dcfce7;border-radius:10px;padding:12px;margin-bottom:8px;">
+        <div style="font-size:20px;margin-bottom:4px;">✅</div>
+        <strong style="font-size:12px;color:#15803d;">4. Confirmation</strong>
+        <p style="font-size:11px;color:#64748b;margin-top:4px;">Présence enregistrée, page de succès</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>Cas particuliers</h3>
+<table>
+  <tr><th>Situation</th><th>Comportement</th></tr>
+  <tr><td>Session non active (hors plage horaire)</td><td>Affichage de la page "Session expirée"</td></tr>
+  <tr><td>Email non trouvé dans la base</td><td>Message d'erreur "Agent non trouvé"</td></tr>
+  <tr><td>Agent déjà présent dans cette session</td><td>Message "Présence déjà enregistrée"</td></tr>
+  <tr><td>IP déjà utilisée par un autre agent</td><td>Message d'alerte anti-fraude</td></tr>
+</table>
+
+<!-- ============================================================ 10. ANTI-FRAUDE -->
+<h2 class="section-title"><span class="num">10</span> Système anti-fraude</h2>
+<div class="section-divider"></div>
+
+<p>Deux mécanismes de contrôle sont en place pour éviter les présences frauduleuses :</p>
+
+<div class="grid-2">
+  <div class="card card-red">
+    <h4 style="color:#dc2626;">🚫 Règle 1 — Un email par session</h4>
+    <p style="font-size:12px;">Un agent ne peut marquer sa présence qu'une seule fois par session. Si l'email a déjà été utilisé pour cette session, la demande est rejetée.</p>
+    <pre style="margin-top:8px;">Presence::where('session_presence_id', $id)
+  ->where('agent_id', $agent->id)
+  ->exists();</pre>
+  </div>
+  <div class="card card-amber">
+    <h4 style="color:#d97706;">⚠️ Règle 2 — Une IP par agent</h4>
+    <p style="font-size:12px;">Si une adresse IP a déjà été utilisée par un <em>autre</em> agent dans la même session, une alerte est levée (possible partage de dispositif frauduleux).</p>
+    <pre style="margin-top:8px;">Presence::where('session_presence_id', $id)
+  ->where('adresse_ip', $ip)
+  ->where('agent_id', '!=', $agent->id)
+  ->exists();</pre>
+  </div>
+</div>
+
+<!-- ============================================================ 11. EXPORT -->
+<h2 class="section-title page-break"><span class="num">11</span> Export Excel</h2>
+<div class="section-divider"></div>
+
+<p>L'administrateur peut exporter la liste des présences d'une session au format <strong>.xlsx</strong> en un clic depuis la page de détail des présences.</p>
+
+<h3>Contenu du fichier exporté</h3>
+<table>
+  <tr><th>Colonne</th><th>Source</th><th>Exemple</th></tr>
+  <tr><td>N°</td><td>Index de la liste</td><td>1, 2, 3…</td></tr>
+  <tr><td>Matricule</td><td><code>agents.matricule</code></td><td>AG-2024-001</td></tr>
+  <tr><td>Prénom</td><td><code>agents.prenom</code></td><td>Jean</td></tr>
+  <tr><td>Nom</td><td><code>agents.nom</code></td><td>DUPONT</td></tr>
+  <tr><td>Email</td><td><code>agents.email</code></td><td>jean.dupont@org.bf</td></tr>
+  <tr><td>Téléphone</td><td><code>agents.telephone</code></td><td>+226 70 00 00 00</td></tr>
+  <tr><td>Heure de marquage</td><td><code>presences.date_heure</code></td><td>08:45:32</td></tr>
+  <tr><td>Adresse IP</td><td><code>presences.adresse_ip</code></td><td>192.168.1.50</td></tr>
+</table>
+
+<p>Le nom du fichier est auto-généré selon le format : <code>presences_&lt;nom-session&gt;_&lt;date&gt;.xlsx</code></p>
+
+<div class="card card-green">
+  <p><strong>Package utilisé :</strong> <code>maatwebsite/excel</code> v3.x — implémente <code>FromCollection</code>, <code>WithHeadings</code>, <code>ShouldAutoSize</code> et <code>WithStyles</code> pour un rendu professionnel avec en-têtes en gras et colonnes ajustées automatiquement.</p>
+</div>
+
+<!-- ============================================================ 12. ROUTES -->
+<h2 class="section-title"><span class="num">12</span> Routes de l'application</h2>
+<div class="section-divider"></div>
+
+<h3>Routes publiques (sans authentification)</h3>
+
+<div class="route">
+  <span class="method method-get">GET</span>
+  <span class="route-path">/presence/{token}</span>
+  <span class="route-desc">Afficher le formulaire de marquage de présence</span>
+</div>
+<div class="route">
+  <span class="method method-post">POST</span>
+  <span class="route-path">/presence/{token}</span>
+  <span class="route-desc">Valider la présence (soumission formulaire)</span>
+</div>
+<div class="route">
+  <span class="method method-get">GET</span>
+  <span class="route-path">/admin/login</span>
+  <span class="route-desc">Page de connexion administrateur</span>
+</div>
+<div class="route">
+  <span class="method method-post">POST</span>
+  <span class="route-path">/admin/login</span>
+  <span class="route-desc">Traitement du formulaire de connexion</span>
+</div>
+<div class="route">
+  <span class="method method-post">POST</span>
+  <span class="route-path">/admin/logout</span>
+  <span class="route-desc">Déconnexion administrateur</span>
+</div>
+
+<h3>Routes protégées (middleware admin.auth)</h3>
+
+<div class="route">
+  <span class="method method-get">GET</span>
+  <span class="route-path">/admin/dashboard</span>
+  <span class="route-desc">Tableau de bord avec statistiques</span>
+</div>
+<div class="route">
+  <span class="method method-get">GET</span>
+  <span class="route-path">/admin/agents</span>
+  <span class="route-desc">Liste paginée des agents</span>
+</div>
+<div class="route">
+  <span class="method method-get">GET</span>
+  <span class="route-path">/admin/session-presences</span>
+  <span class="route-desc">Liste des sessions de présence</span>
+</div>
+<div class="route">
+  <span class="method method-get">GET</span>
+  <span class="route-path">/admin/session-presences/create</span>
+  <span class="route-desc">Formulaire de création de session</span>
+</div>
+<div class="route">
+  <span class="method method-post">POST</span>
+  <span class="route-path">/admin/session-presences</span>
+  <span class="route-desc">Enregistrer une nouvelle session (+ génère QR)</span>
+</div>
+<div class="route">
+  <span class="method method-get">GET</span>
+  <span class="route-path">/admin/session-presences/{id}/presences</span>
+  <span class="route-desc">Liste des agents présents pour une session</span>
+</div>
+<div class="route">
+  <span class="method method-get">GET</span>
+  <span class="route-path">/admin/session-presences/{id}/presences/export</span>
+  <span class="route-desc">Télécharger la liste en Excel (.xlsx)</span>
+</div>
+<div class="route">
+  <span class="method method-get">GET</span>
+  <span class="route-path">/admin/session-presences/regenerer-qr</span>
+  <span class="route-desc">Régénérer tous les QR codes avec l'APP_URL actuelle</span>
+</div>
+<div class="route">
+  <span class="method method-get">GET</span>
+  <span class="route-path">/admin/point-presences</span>
+  <span class="route-desc">Liste des points de présence (lieux)</span>
+</div>
+<div class="route">
+  <span class="method method-put">PUT</span>
+  <span class="route-path">/admin/session-presences/{id}</span>
+  <span class="route-desc">Modifier une session</span>
+</div>
+<div class="route">
+  <span class="method method-del">DEL</span>
+  <span class="route-path">/admin/session-presences/{id}</span>
+  <span class="route-desc">Supprimer une session</span>
+</div>
+
+<!-- ============================================================ 13. CONFIG -->
+<h2 class="section-title page-break"><span class="num">13</span> Configuration et déploiement</h2>
+<div class="section-divider"></div>
+
+<h3>Fichier <code>.env</code> — Variables importantes</h3>
+<table>
+  <tr><th>Variable</th><th>Valeur exemple</th><th>Description</th></tr>
+  <tr><td><code>APP_URL</code></td><td><code>http://172.16.0.96:8000</code></td><td>URL publique du serveur (utilisée dans les QR codes)</td></tr>
+  <tr><td><code>ADMIN_PASSWORD</code></td><td><code>1234567890</code></td><td>Mot de passe de l'interface admin</td></tr>
+  <tr><td><code>DB_HOST</code></td><td><code>127.0.0.1</code></td><td>Hôte de la base de données</td></tr>
+  <tr><td><code>DB_PORT</code></td><td><code>3306</code></td><td>Port MySQL/MariaDB</td></tr>
+  <tr><td><code>DB_DATABASE</code></td><td><code>gestion_presence</code></td><td>Nom de la base de données</td></tr>
+  <tr><td><code>DB_USERNAME</code></td><td><code>root</code></td><td>Utilisateur MySQL</td></tr>
+  <tr><td><code>DB_PASSWORD</code></td><td><code>12345</code></td><td>Mot de passe MySQL</td></tr>
+  <tr><td><code>SESSION_DRIVER</code></td><td><code>database</code></td><td>Pilote de sessions</td></tr>
+</table>
+
+<h3>Lancement du serveur de développement</h3>
+<pre>
+<span class="comment"># 1. Nettoyer les caches</span>
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
+
+<span class="comment"># 2. Compiler les assets CSS/JS</span>
+npm run build
+
+<span class="comment"># 3. Lancer le serveur (accessible depuis le réseau local)</span>
+php artisan serve --host=0.0.0.0 --port=8000
+
+<span class="comment"># 4. Si XAMPP MariaDB n'est pas lancé (Windows)</span>
+C:\xampp\mysql\bin\mysqld.exe --defaults-file="C:\xampp\mysql\bin\my.ini" --standalone
+</pre>
+
+<div class="card card-amber">
+  <h4 style="color:#d97706;">⚠️ Note importante — Réseau WiFi</h4>
+  <p style="font-size:12px;">Pour que les agents puissent scanner le QR code depuis leur téléphone, le PC et les téléphones doivent être sur le <strong>même réseau WiFi</strong>. En cas de changement d'IP (reconnexion WiFi), il faut :</p>
+  <ul class="styled" style="font-size:12px;margin-top:8px;">
+    <li>Mettre à jour <code>APP_URL</code> dans le <code>.env</code> avec la nouvelle IP</li>
+    <li>Relancer le serveur</li>
+    <li>Cliquer sur <strong>"Régénérer QR"</strong> dans l'admin pour mettre à jour les QR codes</li>
+  </ul>
+</div>
+
+<h3>Lien symbolique storage</h3>
+<pre>
+<span class="comment"># À exécuter une seule fois après installation</span>
+php artisan storage:link
+</pre>
+
+<!-- ============================================================ 14. PACKAGES -->
+<h2 class="section-title"><span class="num">14</span> Packages installés</h2>
+<div class="section-divider"></div>
+
+<table>
+  <tr><th>Package</th><th>Version</th><th>Utilisation</th></tr>
+  <tr>
+    <td><code>laravel/framework</code></td>
+    <td>^12.0</td>
+    <td>Framework principal</td>
+  </tr>
+  <tr>
+    <td><code>simplesoftwareio/simple-qrcode</code></td>
+    <td>^4.2</td>
+    <td>Génération de QR codes en format SVG</td>
+  </tr>
+  <tr>
+    <td><code>maatwebsite/excel</code></td>
+    <td>^3.1</td>
+    <td>Export des listes de présence en fichier .xlsx</td>
+  </tr>
+  <tr>
+    <td><code>laravel-vite-plugin</code></td>
+    <td>^1.2</td>
+    <td>Intégration Vite avec Laravel</td>
+  </tr>
+  <tr>
+    <td><code>@tailwindcss/vite</code></td>
+    <td>^4.0</td>
+    <td>Plugin Tailwind CSS pour Vite</td>
+  </tr>
+  <tr>
+    <td><code>carbon/carbon</code></td>
+    <td>(via Laravel)</td>
+    <td>Manipulation des dates/heures (session active)</td>
+  </tr>
+</table>
+
+<br>
+
+<div class="card card-green" style="text-align:center;">
+  <p style="font-size:13px;"><strong>✅ Application fonctionnelle</strong> — Toutes les fonctionnalités sont implémentées et testées.</p>
+  <p style="font-size:12px;color:#15803d;margin-top:4px;">Gestion des sessions · QR Codes · Anti-fraude · Export Excel · Authentification Admin</p>
+</div>
+
+<div class="doc-footer">
+  <p>Gestion Présence — Documentation Technique v1.0 — Juin 2026</p>
+  <p style="margin-top:4px;">Développé avec Laravel 12 · PHP 8.2 · Tailwind CSS · MariaDB</p>
+</div>
+
+</div><!-- end .page -->
+
+</body>
+</html>

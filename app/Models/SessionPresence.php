@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SessionPresence extends Model
 {
@@ -19,6 +20,8 @@ class SessionPresence extends Model
         'heure_debut',
         'heure_fin',
         'point_presence_id',
+        'token',
+        'qr_code_chemin',
     ];
 
 
@@ -52,5 +55,19 @@ class SessionPresence extends Model
     public function pointPresence(): BelongsTo
     {
         return $this->belongsTo(PointPresence::class);
+    }
+
+    public function presences(): HasMany
+    {
+        return $this->hasMany(Presence::class);
+    }
+
+    public function estActive(): bool
+    {
+        $now = Carbon::now();
+        $debut = Carbon::parse($this->date_presence . ' ' . $this->heure_debut);
+        $fin   = Carbon::parse($this->date_presence . ' ' . $this->heure_fin);
+
+        return $now->between($debut, $fin);
     }
 }

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SessionPresenceController extends Controller
 {
@@ -21,7 +24,6 @@ class SessionPresenceController extends Controller
 
     public function store(Request $request)
     {
-        // Validation
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'date_presence' => 'required|date',
@@ -30,8 +32,18 @@ class SessionPresenceController extends Controller
             'point_presence_id' => 'required|exists:point_presences,id',
         ]);
 
-        // Create SessionPresence
-        $sessionPresence = \App\Models\SessionPresence::create($validated);
+        $validated['token'] = Str::uuid()->toString();
+
+        $session = \App\Models\SessionPresence::create($validated);
+
+        // Génération du QR code — on force APP_URL pour que l'IP soit celle du .env
+        $url = rtrim(config('app.url'), '/') . '/presence/' . $session->token;
+        Storage::disk('public')->makeDirectory('qrcodes');
+        $cheminRelatif = 'qrcodes/session_' . $session->id . '.svg';
+        $svgContent = QrCode::format('svg')->size(300)->margin(1)->generate($url);
+        Storage::disk('public')->put($cheminRelatif, $svgContent);
+
+        $session->update(['qr_code_chemin' => $cheminRelatif]);
 
         return redirect()->route('admin.session-presences.index')->with('success', 'Session de présence créée avec succès.');
     }
@@ -69,6 +81,37 @@ class SessionPresenceController extends Controller
         $sessionPresence->delete();
 
         return redirect()->route('admin.session-presences.index')->with('success', 'Session de présence supprimée avec succès.');
+    }
+
+    public function presences($id)
+    {
+        $session = \App\Models\SessionPresence::with(['presences.agent', 'pointPresence'])->findOrFail($id);
+        return view('admin.session-presences.presences', compact('session'));
+    }
+
+    public function exportPresences($id)
+    {
+        $session = \App\Models\SessionPresence::with(['presences.agent'])->findOrFail($id);
+        $filename = 'presences_' . \Illuminate\Support\Str::slug($session->nom) . '_' . $session->date_presence . '.xlsx';
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\PresencesExport($session), $filename);
+    }
+
+    public function regenererQrCodes()
+    {
+        $sessions = \App\Models\SessionPresence::whereNotNull('token')->get();
+
+        Storage::disk('public')->makeDirectory('qrcodes');
+
+        foreach ($sessions as $session) {
+            $url           = rtrim(config('app.url'), '/') . '/presence/' . $session->token;
+            $cheminRelatif = 'qrcodes/session_' . $session->id . '.svg';
+            $svgContent    = QrCode::format('svg')->size(300)->margin(1)->generate($url);
+            Storage::disk('public')->put($cheminRelatif, $svgContent);
+            $session->update(['qr_code_chemin' => $cheminRelatif]);
+        }
+
+        return redirect()->route('admin.session-presences.index')
+            ->with('success', $sessions->count() . ' QR code(s) régénéré(s) avec la nouvelle URL.');
     }
 
 }

@@ -17,6 +17,7 @@ class Presence extends Model
         'longitude',
         'distance_metre',
         'appareil',
+        'adresse_ip',
         'valide',
         'session_presence_id',
         'agent_id',
