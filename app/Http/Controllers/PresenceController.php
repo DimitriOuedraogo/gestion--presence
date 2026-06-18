@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Presence;
+use App\Models\SessionPresence;
 use Illuminate\Http\Request;
 use App\Services\GeolocationService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -19,12 +22,41 @@ class PresenceController extends Controller
 
     public function index()
     {
-        return view('presences.index');
+        // Récupère toutes les sessions pour alimenter la liste déroulante
+        $sessions = SessionPresence::orderBy('created_at', 'desc')->get();
+        return view('admin.presences.index', compact('sessions'));
     }
 
-    public function create()
+    public function getPresencesBySession($sessionId)
     {
-        return view('presences.create');
+        // Récupère les présences associées à la session (Adaptez le nom de la relation ou de la clé étrangère)
+        $presences = Presence::with('agent')->where('session_presence_id', $sessionId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'presences' => $presences
+        ]);
+    }
+
+
+    public function create(Request $request)
+    {
+        $sessionId = $request->query('session_id');
+
+        if ($sessionId) {
+            // 1. On cherche la session concernée
+            $session = SessionPresence::find($sessionId);
+
+            // 2. Si la session n'existe pas ou si l'heure actuelle dépasse l'heure de fin
+            if (!$session || Carbon::now()->greaterThan($session->heure_fin)) { // Ajustez 'heure_fin' selon votre colonne
+                return redirect()->route('presences.expired');
+                // Ou simplement retourner une vue d'erreur :
+                // return view('presences.error', ['message' => 'Ce QR Code a expiré.']);
+            }
+        }
+
+        return view('create', compact('sessionId'));
     }
 
     public function store(Request $request)
@@ -199,6 +231,6 @@ class PresenceController extends Controller
     public function edit($id)
     {
         $presence = \App\Models\Presence::findOrFail($id);
-        return view('presences.edit', compact('presence'));
+        return view('admin.presences.edit', compact('presence'));
     }
 }

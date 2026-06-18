@@ -21,6 +21,12 @@ class SessionPresence extends Model
         'point_presence_id',
     ];
 
+    protected function cast(): array
+    {
+        return [
+            'date_presence' => 'datetime'
+        ];
+    }
 
     protected function datePresenceFormatee(): Attribute
     {

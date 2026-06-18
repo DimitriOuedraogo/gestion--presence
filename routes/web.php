@@ -7,6 +7,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/presences/session/{sessionId}', [PresenceController::class, 'getPresencesBySession'])->name('presences.by-session');
+
 
 Route::get('/home', function () {
     return view('index');
@@ -53,6 +55,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/{id}/edit', 'edit')->name('edit');
         Route::post('/', 'store')->name('store');
         Route::put('/{id}', 'update')->name('update');
+        Route::delete('/{id}', 'destroy')->name('destroy');
+    });
+
+    /* Route::prefix('agents')->controller(\App\Http\Controllers\AgentController::class)->name('agents.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        // Route::get('/{id}', 'show')->name('show');
+        Route::get('/{id}/edit', 'edit')->name('edit');
+        Route::post('/', 'store')->name('store');
+        Route::put('/{id}', 'update')->name('update');
+        Route::delete('/{id}', 'destroy')->name('destroy');
+    }); */
+
+    Route::prefix('presences')->controller(\App\Http\Controllers\PresenceController::class)->name('presences.')->group(function () {
+        Route::get('/', 'index')->name('index');
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
 
